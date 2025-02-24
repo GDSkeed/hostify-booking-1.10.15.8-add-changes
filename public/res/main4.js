@@ -244,9 +244,32 @@ jQuery(document).ready(function($) {
         submitForm(true);
     });
 
-    $formWrap.on("submit", "form", function () {
-        // reFormatSearchFormDateCal($('input[name=start_date]', this), startSelected);
-        // reFormatSearchFormDateCal($('input[name=end_date]', this), endSelected);
+    $formWrap.on("submit", "form", function (e) {
+        let $form = $(this);
+        let $submitBtn = $form.find('input[type="submit"]');
+        let formAction = $submitBtn.attr('formaction');
+        
+        // Get current language from URL
+        let currentUrl = window.location.href;
+        let langMatch = currentUrl.match(/\/([a-z]{2})\//);
+        if (langMatch && langMatch[1]) {
+            // If formAction doesn't already have language prefix, add it
+            if (!formAction.includes('/' + langMatch[1] + '/')) {
+                let urlParts = formAction.split('://');
+                if (urlParts.length > 1) {
+                    let domain = urlParts[0] + '://' + urlParts[1].split('/')[0];
+                    let path = '/' + urlParts[1].split('/').slice(1).join('/');
+                    formAction = domain + '/' + langMatch[1] + path;
+                    $submitBtn.attr('formaction', formAction);
+                }
+            }
+        }
+        
+        console.log('Form submission:', {
+            originalAction: formAction,
+            currentUrl: window.location.href,
+            formData: $form.serialize()
+        });
     });
 
 

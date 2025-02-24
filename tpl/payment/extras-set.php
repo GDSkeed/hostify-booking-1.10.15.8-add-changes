@@ -9,6 +9,11 @@
 			<div class="row payment-extras-set-item" data-id="<?= $extra->fee_id ?>">
 				<div class="col-md-8">
 					<?= __($extra->name, 'hostifybooking') ?>
+					<?php if (!empty($extra->description)): ?>
+						<div class="extra-description hfy-wrap small">
+							<?= nl2br($extra->description) ?>
+						</div>
+					<?php endif; ?>
 				</div>
 				<div class="col-md-4 text-right price">
 					<?php // todo  $extra->percent ?>

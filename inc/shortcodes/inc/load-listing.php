@@ -8,6 +8,14 @@ $id = (int) ($id ?? $listingId ?? $_GET['id'] ?? $wp->query_vars['id'] ?? 0);
 
 $listing = $api->getWebsiteListing($id, true, $prm->startDate ?? '', $prm->endDate ?? '', $prm->guests ?? '', $prm->adults ?? '', $prm->children ?? '', $prm->infants ?? '', $prm->pets ?? '', true);
 
+
+//echo '<div style="background: #f5f5f5; padding: 20px; margin: 20px; border: 1px solid #ddd;">';
+//echo '<h3>Debug Info:</h3>';
+//echo '<pre>';
+//var_dump($listing);
+//echo '</pre>';
+//echo '</div>';
+
 if (!$listing) {
 	// throw new HttpException(503, __('Please try again later', 'hostifybooking'));
 	hfy_no_listing();

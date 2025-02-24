@@ -868,18 +868,27 @@ function updatePopupTips(mask, over, txt, nomin)
         } else if (true != nomin) {
             let minstay = getMinstay(d);
             if (minstay > 0) {
-                tipPopup(this, 'Minimum stay ' + minstay + ' night' + (minstay > 1 ? 's' : ''));
+                let minStayText = typeof hfyTranslations !== 'undefined' ? 
+                    (minstay > 1 ? hfyTranslations.minStayPlural : hfyTranslations.minStaySingular).replace('%d', minstay) :
+                    'Minimum stay ' + minstay + ' night' + (minstay > 1 ? 's' : '');
+                tipPopup(this, minStayText);
             }
         }
     });
 }
 
 function updatePopupTipsIn() {
-    updatePopupTips(calendarInDays, calendarOverInDays, 'This date is not available for check-in')
+    updatePopupTips(calendarInDays, calendarOverInDays, 
+        typeof hfyTranslations !== 'undefined' && hfyTranslations.notAvailableIn ? 
+        hfyTranslations.notAvailableIn : 
+        'This date is not available for check-in')
 }
 
 function updatePopupTipsOut() {
-    updatePopupTips(calendarOutDays, calendarOverOutDays, 'This date is not available for check-out', true)
+    updatePopupTips(calendarOutDays, calendarOverOutDays, 
+        typeof hfyTranslations !== 'undefined' && hfyTranslations.notAvailableOut ? 
+        hfyTranslations.notAvailableOut : 
+        'This date is not available for check-out', true)
 }
 
 function showHideMap(show, noseturl)

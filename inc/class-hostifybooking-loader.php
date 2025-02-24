@@ -689,6 +689,7 @@ class Hostifybooking_Loader
 		$this->add_script('hfyjqobj', 'res/lib/jquery.query-object.js');
 		$this->add_script('hfymoment', 'res/lib/moment.2.30.1.min.js');
 		$this->add_script('hfycalentim', 'res/lib/calendar/calentim.js');
+		$this->add_script('hfycalendar-init', 'res/js/calendar-init.js', ['jquery', 'hfycalentim']);
 		$this->add_script('hfyjqhammer', 'res/lib/jquery.hammer.js');
 		// $this->add_script('hfyjqlazy', 'res/lib/jquery-lazy/jquery.lazy.min.js');
 		$this->add_script('hfylightglry', 'res/lib/lightgallery/dist/js/lightgallery-all.min.js');
@@ -708,6 +709,18 @@ class Hostifybooking_Loader
 
 		// $this->add_script( 'hfyajaxhandle', 'res/main.js' ); // in ajax class
 		$this->add_script( 'hfyfn', 'res/fn.js' ); // common functions
+		
+		// Add translations for tooltips
+		wp_localize_script('hfyfn', 'hfyTranslations', [
+			'minStaySingular' => _n('Minimum stay %d night', 'Minimum stay %d nights', 1, 'hostifybooking'),
+			'minStayPlural' => _n('Minimum stay %d night', 'Minimum stay %d nights', 2, 'hostifybooking'),
+			'notAvailableIn' => __('This date is not available for check-in', 'hostifybooking'),
+			'notAvailableOut' => __('This date is not available for check-out', 'hostifybooking'),
+			// Calendar button translations
+			'calendarCancel' => __('Cancel', 'hostifybooking'),
+			'calendarApply' => __('Apply', 'hostifybooking'),
+			'calendarReset' => __('Reset', 'hostifybooking')
+		]);
 
 		// just register, will be used for shortcodes later
 		$this->reg_script('hfysc-payment-3ds', 'res/payment-3ds.js');

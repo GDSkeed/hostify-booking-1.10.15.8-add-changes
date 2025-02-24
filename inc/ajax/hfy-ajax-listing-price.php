@@ -78,7 +78,7 @@ if ($result->success ?? false) {
 
 } else {
 	$success = false;
-	$html = '<div class="calendar-error">' . (isset($result->error) ? $result->error : 'Unavailable') . '</div>';
+	$html = '<div class="calendar-error">' . (isset($result->error) ? $result->error : __('Unavailable', 'hostifybooking')) . '</div>';
 }
 
 $out = [

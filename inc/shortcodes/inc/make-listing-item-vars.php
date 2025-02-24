@@ -1,6 +1,11 @@
 <?php
 if ( ! defined( 'WPINC' ) ) die;
 
+$listingDescription = $listing->description;
+$listingTitle = empty($listingDescription->name) ? $listing->name : $listingDescription->name;
+// Use description name as translation source if available, otherwise use listing name
+$listing->name = empty($listingDescription->name) ? __($listing->name, 'hostifybooking') : __($listingDescription->name, 'hostifybooking');
+
 $rating = isset($listing->reviews->rating) ? ListingHelper::getReviewRating($listing->reviews->rating) : 0;
 $reviewsRating = ListingHelper::getReviewStarRating($rating);
 
