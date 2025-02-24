@@ -504,6 +504,11 @@ function initGmap3()
                 mapTypeId: google.maps.MapTypeId.ROADMAP
             }).marker([{
                 position: center,
+                icon: hfyMapPrices ? {} : {
+                    url: "https://i.imgur.com/p7rweMY.png", // 64px
+                    scaledSize: new google.maps.Size(44, 44),    // Keep 44x44 size
+                    anchor: new google.maps.Point(22, 44)        // Changed to bottom center (width/2, height)
+                }
             }]);
         }
     }
@@ -532,11 +537,9 @@ function initGmap3()
             }).marker({
                 position: center,
                 icon: hfyMapPrices ? {} : {
-                    // url: "https://i.imgur.com/oYxjGMM.png", // 50px
-                    // url: "https://i.imgur.com/Hv9J7wr.png", // 44px
                     url: "https://i.imgur.com/jDKIbxF.png", // 64px
-                    scaledSize: new google.maps.Size(44, 44), // Manipulate size here
-                    anchor: new google.maps.Point(22, 22) // Manipulate anchor here
+                    scaledSize: new google.maps.Size(44, 44),  // Keep 44x44 size
+                    anchor: new google.maps.Point(22, 22)      // Keep center point for circle map
                 }
             });
         }
@@ -727,8 +730,6 @@ function initializeStaticMap() {
         const constantRadius = 3000;
         staticMapUrl += `&path=color:0x808080|weight:0|fillcolor:0x9dc7c7|${generateCirclePath(lat, lng, constantRadius)}`;
         const centerMarkerUrl = "https://i.imgur.com/jDKIbxF.png"; // 64px
-        // const centerMarkerUrl = "https://i.imgur.com/oYxjGMM.png"; // 50px
-        // const centerMarkerUrl = "https://i.imgur.com/Hv9J7wr.png"; // 44px
         staticMapUrl += `&markers=anchor:center|${"scale:2|size:64x64"}|icon:${encodeURIComponent(centerMarkerUrl)}|${lat},${lng}`;  // Center anchor for circle map
     } else {
         const markerUrl = "https://i.imgur.com/p7rweMY.png"; // 64px

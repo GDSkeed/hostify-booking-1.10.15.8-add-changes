@@ -32,11 +32,11 @@ include HOSTIFYBOOKING_DIR . 'inc/shortcodes/inc/load-listing.php';
 include HOSTIFYBOOKING_DIR . 'inc/shortcodes/inc/make-listing-tpl-vars.php';
 ?>
 <script>
-    var 
+     var 
     hfyGoogleMapsApiKey = '<?= esc_js($settings->api_key_maps); ?>',
     // Debug - check actual URLs
-    googleMapLocationPin = '<?= str_replace('http://', 'https://', HOSTIFYBOOKING_URL . 'public/res/images/map-marker.png'); ?>', // <?= HOSTIFYBOOKING_URL . 'public/res/images/map-marker.png' ?>
-    googleMapLocationProperty = '<?= str_replace('http://', 'https://', HOSTIFYBOOKING_URL . 'public/res/images/house-location.png'); ?>'; // <?= HOSTIFYBOOKING_URL . 'public/res/images/house-location.png' ?>
+    googleMapLocationPin = '<?= str_replace('http://', 'https://', HOSTIFYBOOKING_URL . 'public/res/images/precise.png'); ?>', // <?= HOSTIFYBOOKING_URL . 'public/res/images/precise.png' ?>
+    googleMapLocationProperty = '<?= str_replace('http://', 'https://', HOSTIFYBOOKING_URL . 'public/res/images/approx.png'); ?>'; // <?= HOSTIFYBOOKING_URL . 'public/res/images/approx.png' ?>
 </script>
 <?php
 include hfy_tpl('listing/listing-location');
