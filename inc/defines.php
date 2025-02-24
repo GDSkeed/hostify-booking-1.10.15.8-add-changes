@@ -284,7 +284,7 @@ function hfy_define_consts()
 		define('HFY_SHOW_PETS_MAX', intval($options['show_pets_max'] ?? 10));
 
 	if (!defined('HFY_ADV_SEARCH_PETS'))
-		define('HFY_ADV_SEARCH_PETS', !HFY_USE_BOOKING_FORM_V2 && (($options['adv_search_pets'] ?? 'yes') == 'yes'));
+		define('HFY_ADV_SEARCH_PETS', !HFY_USE_BOOKING_FORM_V2 && ($options['adv_search_pets'] ?? 'no') == 'yes');
 
 	if (!defined('HFY_SHOW_INFANTS'))
 		define('HFY_SHOW_INFANTS', ($options['show_infants'] ?? 'yes') == 'yes');
@@ -344,6 +344,9 @@ function hfy_define_consts()
 		}
 		define('HFY_TAGS_MENU', $m);
 	}
+
+	if (!defined('HFY_DYNAMIC_GOOGLE_MAP'))
+        define('HFY_DYNAMIC_GOOGLE_MAP', ($options['dynamic_google_map'] ?? 'no') == 'yes');
 }
 
 add_action('setup_theme', 'hfy_define_consts');

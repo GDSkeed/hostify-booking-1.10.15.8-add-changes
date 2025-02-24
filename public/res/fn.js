@@ -23,6 +23,9 @@ var mredImg_ = typeof mredImg === 'undefined' ? null : mredImg;
 var hfyImgGrey = hfyIsMapC ? meImg_ : mgreyImg_;
 var hfyImgRed = hfyIsMapC ? meImg_ : mredImg_;
 var hfyMapStyles = typeof hfyMapStylesOption !== 'undefined' ? [] : hfyMapStylesOption;
+var hfyGoogleMapsApiKey_ = typeof hfyGoogleMapsApiKey === 'undefined' ? null : hfyGoogleMapsApiKey;
+var googleMapLocationPin_ = typeof googleMapLocationPin === 'undefined' ? null : googleMapLocationPin;
+var googleMapLocationProperty_ = typeof googleMapLocationProperty === 'undefined' ? null : googleMapLocationProperty;
 
 var pagiDefaultOpts = {
     first: '',
@@ -476,7 +479,7 @@ var mmoved,
         page: 1
     }
 
-
+// gmap3 is the ultimate plugin to create and manage Google Maps with jQuery
 function initGmap3()
 {
     var $locationWrapper = jQuery('.location-wrapper');
@@ -515,29 +518,26 @@ function initGmap3()
                 maxZoom: hfyMapMaxZoom,
                 gestureHandling: "auto",
                 mapTypeId: google.maps.MapTypeId.ROADMAP
-
-            // }).circle({
-            //     center: center,
-            //     // radius: 750,
-            //     radius: 5 / Math.pow(2, window.hfyMapCurrentZoom),
-            //     fillColor: "#FFAF9F",
-            //     strokeColor: "#FF512F"
-            // });
-
+            }).then(function(map) {
+                // Add circle after map is created
+                new google.maps.Circle({
+                    map: map,
+                    center: new google.maps.LatLng(lat, lng),
+                    radius: 3000,
+                    fillColor: "#9dc7c7",
+                    fillOpacity: 0.3,
+                    strokeColor: "#808080",
+                    strokeWeight: 0  // Changed from 1 to 0 to remove border
+                });
             }).marker({
-                map: map,
                 position: center,
                 icon: hfyMapPrices ? {} : {
-                    strokeColor: '#FF512F',
-                    strokeOpacity: 1.0,
-                    strokeWeight: 2,
-                    fillColor: '#FFAF9F',
-                    fillOpacity: .5,
-                    path: google.maps.SymbolPath.CIRCLE,
-                    scale: 30,
-                    anchor: new google.maps.Point(0, 0)
+                    // url: "https://i.imgur.com/oYxjGMM.png", // 50px
+                    // url: "https://i.imgur.com/Hv9J7wr.png", // 44px
+                    url: "https://i.imgur.com/jDKIbxF.png", // 64px
+                    scaledSize: new google.maps.Size(44, 44), // Manipulate size here
+                    anchor: new google.maps.Point(22, 22) // Manipulate anchor here
                 }
-                // zIndex: Math.round(citymap[i].center.lat * -100000) << 5
             });
         }
     }
@@ -551,6 +551,7 @@ function addGmap3Script() {
     document.body.appendChild(script);
 }
 
+// Original function for dynamic map
 function initializeMap()
 {
     addGmap3Script();
@@ -658,6 +659,124 @@ function initializeMap()
         });
     }
 }
+
+/**
+ * Initialize a static Google Map with custom styles
+ * 
+ * Uses Google Static Maps API to create a styled map image.
+ * Styling syntax: &style=feature:type|element:part|color:0xRRGGBB
+ * 
+ * Important notes:
+ * 1. Each style must be added as a separate &style= parameter
+ * 2. Colors must be in hex format without # and prefixed with 0x
+ * 3. Multiple styles are chained in URL: &style=...&style=...&style=...
+ * 
+ * @example Style format:
+ * - Water: &style=feature:water|element:geometry|color:0xfa96ee
+ * - Roads: &style=feature:road.highway|element:geometry.fill|color:0xffe15f
+ * - Labels: &style=feature:road|element:labels|visibility:off
+ */
+function initializeStaticMap() {
+    var $staticWrapper = jQuery('.static-location-wrapper');
+    if ($staticWrapper.length <= 0) return;
+
+    const baseUrl = 'https://maps.googleapis.com/maps/api/staticmap';
+    
+    // Base parameters
+    const params = {
+        size: '640x640',
+        maptype: hfyMapType.toLowerCase(),
+        key: hfyGoogleMapsApiKey_,
+        scale: 2,
+        zoom: hfyMapMaxZoom > 12 ? 12 : hfyMapMaxZoom,
+        center: `${lat},${lng}`
+    };
+
+    // Build URL with base parameters
+    let staticMapUrl = `${baseUrl}?${Object.entries(params)
+        .map(([key, value]) => `${key}=${value}`)
+        .join('&')}`;
+    
+    // Add styles from hfyMapStyles variable
+    if (hfyMapStyles && Array.isArray(hfyMapStyles)) {
+        hfyMapStyles.forEach(style => {
+            if (style.stylers && style.stylers.length > 0) {
+                let styleStr = `feature:${style.featureType || 'all'}|element:${style.elementType || 'all'}`;
+                
+                // Process stylers
+                style.stylers.forEach(styler => {
+                    Object.entries(styler).forEach(([key, value]) => {
+                        if (key === 'color') {
+                            // Remove # if present and ensure lowercase
+                            value = value.replace('#', '').toLowerCase();
+                            styleStr += `|color:0x${value}`;
+                        } else if (['visibility', 'weight', 'saturation'].includes(key)) {
+                            styleStr += `|${key}:${value}`;
+                        }
+                    });
+                });
+
+                // Add the style to URL
+                staticMapUrl += `&style=${styleStr}`;
+            }
+        });
+    }
+
+    // Add markers and path parameters
+    if (hfyIsMapC) {
+        const constantRadius = 3000;
+        staticMapUrl += `&path=color:0x808080|weight:0|fillcolor:0x9dc7c7|${generateCirclePath(lat, lng, constantRadius)}`;
+        const centerMarkerUrl = "https://i.imgur.com/jDKIbxF.png"; // 64px
+        // const centerMarkerUrl = "https://i.imgur.com/oYxjGMM.png"; // 50px
+        // const centerMarkerUrl = "https://i.imgur.com/Hv9J7wr.png"; // 44px
+        staticMapUrl += `&markers=anchor:center|${"scale:2|size:64x64"}|icon:${encodeURIComponent(centerMarkerUrl)}|${lat},${lng}`;  // Center anchor for circle map
+    } else {
+        const markerUrl = "https://i.imgur.com/p7rweMY.png"; // 64px
+        staticMapUrl += `&markers=anchor:bottom|${"scale:2|size:64x64"}|icon:${encodeURIComponent(markerUrl)}|${lat},${lng}`;  // Bottom anchor for regular map
+    }
+
+    // Create and add the image
+    const $img = jQuery('<img>', {
+        src: staticMapUrl,
+        alt: 'Location Map',
+        class: 'scaled-map-image',
+        style: 'width: 100%; height: 60vh; min-height: 350px; object-fit: cover;'
+    });
+
+    const $innerDiv = jQuery('<div>', {
+        style: 'justify-content: center; display: flex; width: 100%; height: 100%;'
+    }).append($img);
+
+    $staticWrapper.html($innerDiv);
+}
+
+// Function to generate path for a circle
+function generateCirclePath(lat, lng, radius) {
+    const points = 128;  // Increased from 32 to 128 points for smoother circle
+    const earthRadius = 6371000; // meters
+    const d = radius / earthRadius;
+    const latRad = (lat * Math.PI) / 180;
+    const lngRad = (lng * Math.PI) / 180;
+
+    const path = [];
+    for (let i = 0; i <= points; i++) {
+        const angle = (i * 2 * Math.PI) / points;
+        const latOffset = Math.asin(Math.sin(latRad) * Math.cos(d) + Math.cos(latRad) * Math.sin(d) * Math.cos(angle));
+        const lngOffset = lngRad + Math.atan2(Math.sin(angle) * Math.sin(d) * Math.cos(latRad), Math.cos(d) - Math.sin(latRad) * Math.sin(latOffset));
+        path.push(`${latOffset * (180 / Math.PI)},${lngOffset * (180 / Math.PI)}`);
+    }
+
+    return path.join('|');
+}
+
+jQuery(document).ready(function() {
+    // Check which wrapper exists and initialize corresponding map
+    if (jQuery('.location-wrapper').length > 0) {
+        initializeMap(); // Initialize dynamic map
+    } else if (jQuery('.static-location-wrapper').length > 0) {
+        initializeStaticMap(); // Initialize static map
+    }
+});
 
 let $listingsWrap = jQuery('.hfy-widget-wrap-listings > div');
 let $listingsWrapLoader = jQuery('.hfy-widget-wrap-listings > .hfy-wwl-updating');

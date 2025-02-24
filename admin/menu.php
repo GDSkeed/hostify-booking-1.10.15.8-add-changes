@@ -504,7 +504,7 @@ $fields[] = [
             'title'   => __( 'Show area', 'hostifybooking' ),
             'id'      => 'map_loc_circle',
             'type'    => 'checkbox',
-            'default_option' => 'yes',
+            'default_option' => HFY_MAP_LOC_CIRCLE ? 'yes' : 'no',
             'label'   => __( 'Show the approximate area instead of the exact location point', 'hostifybooking' ),
 		],
 		[
@@ -629,6 +629,14 @@ $fields[] = [
 			'attributes' => [
 				'placeholder' => 'https://www.mybsite.com/'
 			]
+		],
+
+		[
+            'title'          => __( 'Dynamic Google Map', 'hostifybooking' ),
+            'id'             => 'dynamic_google_map',
+            'type'           => 'checkbox',
+			'default_option' => HFY_DYNAMIC_GOOGLE_MAP ? 'yes' : 'no',
+			'label' => __( 'Show dynamic google map ', 'hostifybooking' ) . '(<span style="color: orange;">' . __(' Required Google Maps API Key In Miscellaneous Section ','hostifybooking') . '</span>)',
 		],
 
 		[
